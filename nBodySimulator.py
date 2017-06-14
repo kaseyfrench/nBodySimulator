@@ -8,6 +8,8 @@ from force import *
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
+from scipy.integrate import odeint
+from numpy import vstack, array, squeeze, reshape, zeros
 
 class Nbodysim(object):
 
@@ -41,6 +43,38 @@ class Nbodysim(object):
 
 		return self.particleStates
 
+
+	def deriv(self, x, t):
+
+		dx = zeros(x.shape)
+		
+		for i, p in enumerate(self.particleList):
+			pj = [pj for pj in self.particleList if pj != p]
+			p.state.pos = reshape(x[i*6:i*6+3], (3,1))
+			p.state.vel = reshape(x[i*6+3:i*6+6], (3,1))
+
+			dx[i*6+3:i*6+6] = reshape(self.force.computeAccel(p, pj), (3,))
+
+		dx[0::6] = x[3::6]
+		dx[1::6] = x[4::6]
+		dx[2::6] = x[5::6]
+
+		return dx
+
+
+	def integrate(self, tspan):
+
+		# Upack initial state
+		y0 = array([vstack([s.state.pos, s.state.vel]) for s in self.particleList])
+		y0 = reshape(y0, (y0.size,))
+
+		# Integrate
+		y = odeint(self.deriv, y0, tspan)
+
+		for i, s in enumerate(self.particleStates):
+			self.particleStates[s] = y[:,i*6:i*6+3]
+
+
 	def plotSim2D(self):
 
 		plt.figure()	
@@ -52,6 +86,20 @@ class Nbodysim(object):
 			y = [state[1] for state in statelist]
 
 			plt.plot(x,y,'.')	
+
+	def plotSim2DRelative(self, stateIDtarget, stateIDorigin):
+
+		plt.figure()	
+		plt.axis('equal')
+
+		targetStates = self.particleStates[stateIDtarget]
+		originStates = self.particleStates[stateIDorigin]
+
+		x = [t[0] - o[0] for t, o in zip(targetStates, originStates)]
+		y = [t[1] - o[1] for t, o in zip(targetStates, originStates)]
+
+		plt.plot(x,y,'.')	
+
 
 	def plotSim3D(self):
 

@@ -36,9 +36,9 @@ def test():
 	testParticle1 = MassParticle(2.e30,State(pos = [.0,.0,.0]))
 	testParticle2 = MassParticle(6.e24,State(pos = [1.5e11,0.,0.],\
 	                                        vel = [.0,3.e4,.0]))
-	#testParticle3 = MassParticle(2.e27,State(pos = [.0,.0,1.5e11],\
-																					# vel = [.0,3.4e4,.0]))
-	testList = [testParticle1, testParticle2]
+	testParticle3 = MassParticle(7.3e22,State(pos = [1.5e11+3.8e8,.0,.0],\
+																					vel = [.0,3.e4+1.0e3,.0]))
+	testList = [testParticle1, testParticle2, testParticle3]
 
 	massFactory = MassFactory()
 	massList = massFactory.generateRandomMasses(10,testParticle2.state.pos,\
@@ -48,17 +48,20 @@ def test():
 	#	massparticle.state.display()
 	massList.extend(testList)
 
-	galaxy = Nbodysim(massList,Gravity)
+	galaxy = Nbodysim(testList, Gravity)
 	tspan = np.linspace(0,365*86400,7000)
-	massStates = galaxy.run(tspan)
+
+	galaxy.integrate(tspan)
+
+	# massStates = galaxy.run(tspan)
 
 	#for massparticle in testList:
 	#	massparticle.state.display()
 
-	galaxy.plotSim3D()
+	# galaxy.plotSim3D()
 
 	galaxy.plotSim2D()
-
+	galaxy.plotSim2DRelative(id(testParticle3.state), id(testParticle2.state))
 
 	plt.show()
 
