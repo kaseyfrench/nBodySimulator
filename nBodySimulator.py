@@ -75,7 +75,7 @@ class Nbodysim(object):
 			self.particleStates[s] = y[:,i*6:i*6+3]
 
 
-	def plotSim2D(self):
+	def plotSim2D(self, labels):
 
 		plt.figure()	
 		plt.axis('equal')
@@ -85,21 +85,25 @@ class Nbodysim(object):
 			x = [state[0] for state in statelist]
 			y = [state[1] for state in statelist]
 
-			plt.plot(x,y,'.')	
+			plt.plot(x,y,'.',label = np.copy(labels[k]))
 
-	def plotSim2DRelative(self, stateIDtarget, stateIDorigin):
+		plt.legend()	
+
+	def plotSim2DRelative(self, stateIDtarget, stateIDorigin,labels):
 
 		plt.figure()	
 		plt.axis('equal')
-
-		targetStates = self.particleStates[stateIDtarget]
 		originStates = self.particleStates[stateIDorigin]
+		for target in stateIDtarget:
 
-		x = [t[0] - o[0] for t, o in zip(targetStates, originStates)]
-		y = [t[1] - o[1] for t, o in zip(targetStates, originStates)]
 
-		plt.plot(x,y,'.')	
+			targetStates = self.particleStates[target]
 
+			x = [t[0] - o[0] for t, o in zip(targetStates, originStates)]
+			y = [t[1] - o[1] for t, o in zip(targetStates, originStates)]
+
+			plt.plot(x,y,'.',label = np.copy(labels[target]))
+		plt.legend()
 
 	def plotSim3D(self):
 
@@ -116,6 +120,25 @@ class Nbodysim(object):
 			ax.plot(x,y,z)
 
 			
+	def plotSim3DRelative(self, stateIDtarget, stateIDorigin, labels):
+		fig = plt.figure()
+		ax = fig.add_subplot(111, projection = '3d')
+
+		originStates = self.particleStates[stateIDorigin]
+		for target in stateIDtarget:
+
+
+			targetStates = self.particleStates[target]
+
+			x = [t[0] - o[0] for t, o in zip(targetStates, originStates)]
+			y = [t[1] - o[1] for t, o in zip(targetStates, originStates)]
+			z = [t[2] - o[2] for t, o in zip(targetStates, originStates)]
+
+			ax.plot(x,y,z,'.',label = np.copy(labels[target]))
+		plt.legend()
+
+
+
 
 
 

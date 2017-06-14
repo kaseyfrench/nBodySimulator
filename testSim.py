@@ -33,15 +33,18 @@ def test():
 	# print accMass
 	# print '\n'
 	# print accElectro
-	testParticle1 = MassParticle(2.e30,State(pos = [.0,.0,.0]))
-	testParticle2 = MassParticle(6.e24,State(pos = [1.5e11,0.,0.],\
-	                                        vel = [.0,3.e4,.0]))
-	testParticle3 = MassParticle(7.3e22,State(pos = [1.5e11+3.8e8,.0,.0],\
-																					vel = [.0,3.e4+1.0e3,.0]))
-	testList = [testParticle1, testParticle2, testParticle3]
+	testParticle1 = MassParticle(1.989e30,State(pos = [.0,.0,.0]))
+	testParticle2 = MassParticle(5.972e24,State(pos = [1.496e11,0.,0.],\
+	                                        vel = [.0,2.978e4,.0]))
+	testParticle3 = MassParticle(7.3477e22,State(pos = [1.496e11+3.844e8,.0,.0],\
+																					vel = [.0,2.978e4+1.022e3,.0]))
+	testParticle4 = MassParticle(500,State(pos = [1.496e11+7e6,0.,.0],\
+																					 vel = [.0,2.978e4+1.222e4,5.5e3]))
+
+	testList = [testParticle1, testParticle2, testParticle3, testParticle4]
 
 	massFactory = MassFactory()
-	massList = massFactory.generateRandomMasses(10,testParticle2.state.pos,\
+	massList = massFactory.generateRandomMasses(5,testParticle2.state.pos,\
 	       np.ones((3,1))*8.e8,testParticle2.state.vel,np.ones((3,1))*1.e2,1.e22,1.e21)
 
 	#for massparticle in testList:
@@ -60,9 +63,15 @@ def test():
 
 	# galaxy.plotSim3D()
 
-	galaxy.plotSim2D()
-	galaxy.plotSim2DRelative(id(testParticle3.state), id(testParticle2.state))
+	labels = {id(testParticle1.state) : "Sun" , id(testParticle2.state) : "Earth" ,\
+	 id(testParticle3.state) : "Moon" , id(testParticle4.state) : "Satellite"}
 
+	#tlist = [id(a.state) for a in massList if id(a.state) != id(testParticle1.state)]
+	tlist = [id(testParticle1.state), id(testParticle3.state), id(testParticle4.state)]
+	
+	galaxy.plotSim2D(labels)
+	galaxy.plotSim2DRelative(tlist, id(testParticle2.state),labels)
+	galaxy.plotSim3DRelative(tlist, id(testParticle2.state),labels)
 	plt.show()
 
 if __name__ == '__main__':
