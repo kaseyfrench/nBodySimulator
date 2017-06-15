@@ -2,7 +2,7 @@
 #
 # Kasey French, May 27th 2017
 # ***************************************************************
-
+# Directories need to be clarified-create particle,force modules.
 from force import *
 from particle import *
 

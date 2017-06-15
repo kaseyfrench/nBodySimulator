@@ -45,7 +45,7 @@ class Electromagnetism(Force):
 			r = effector.state.pos-effected.state.pos
 			r3 = np.linalg.norm(r)**3
 
-			acc += (8.98755e9 * effector.charge)/r3 * r /(effected.mass)
+			acc -= (8.98755e9 * effected.charge * effector.charge)/r3 * r /(effected.mass)
 
 
 		return acc	

@@ -40,7 +40,7 @@ class MassParticle(Particle):
 		self.mass = mass
 		self.type = 'Mass'	
 
-class ChargedParticle(MassParticle):
+class ChargedParticle(Particle):
 	
 	def __init__(self, charge, state = State()):
 		super(ChargedParticle, self).__init__(state)
@@ -48,7 +48,48 @@ class ChargedParticle(MassParticle):
 		self.charge = charge
 		self.type = 'Charge'	
 
+class electron(MassParticle, ChargedParticle):
 
+	# Units are in atomic scales 
+	def __init__(self, state = State()):
+		# super(electron, self).__init__(state) <--- why doesn't this work?
+
+		self.charge = -1.0
+		self.mass = 1.0
+		self.type = 'electron'
+		self.state = state
+
+class proton(MassParticle, ChargedParticle):
+
+	# Units are in atomic scales 
+	def __init__(self, state = State()):
+		# super(proton, self).__init__(state) <--- why doesn't this work?
+		
+		self.charge = 1.0
+		self.mass = 1836.0
+		self.type = 'proton'
+		self.state = state
+
+class neutron(MassParticle, ChargedParticle):
+
+	# Units are in atomic scales 
+	def __init__(self, state = State()):
+		# super(proton, self).__init__(state) <--- why doesn't this work?
+		
+		self.charge = 0
+		self.mass = 1836.0
+		self.type = 'neutron'
+		self.state = state		
+
+class ChargedMass(MassParticle, ChargedParticle):
+
+	def __init__(self, mass, charge, state = State()):
+		# super(proton, self).__init__(state) <--- why doesn't this work?
+		
+		self.charge = charge
+		self.mass = mass
+		self.type = 'charged mass'
+		self.state = state	
 
 class MassFactory(object):
 
