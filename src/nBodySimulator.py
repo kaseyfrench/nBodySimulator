@@ -10,13 +10,14 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.integrate import odeint
 from numpy import vstack, array, squeeze, reshape, zeros
+from collections import OrderedDict
 
 class Nbodysim(object):
 
 	def __init__(self, particleList, force):
 		self.particleList = particleList
 		self.force = force()
-		self.particleStates = {}
+		self.particleStates = OrderedDict()
 
 		for p in self.particleList:
 			self.particleStates[id(p.state)] = []
@@ -24,7 +25,7 @@ class Nbodysim(object):
 	def run(self, tspan):
 
 		
-		dt = tspan[1]-tspan[0] # Assumes evenly spaced out array for tspan
+		dt = tspan[1] - tspan[0] # Assumes evenly spaced out array for tspan
 		for k in tspan:
 			
 			tempparticleList = np.copy(self.particleList)
@@ -75,39 +76,38 @@ class Nbodysim(object):
 			self.particleStates[s] = y[:,i*6:i*6+3]
 
 
-	def plotSim2D(self, labels):
-
-		plt.figure()	
-		plt.axis('equal')
+	def plotSim2D(self, labels = {}):
 
 		for k,statelist in self.particleStates.iteritems():
-
+			
 			x = [state[0] for state in statelist]
 			y = [state[1] for state in statelist]
+			try:
+				plt.plot(x, y, '.', label = labels[k])
+			except:
+				plt.plot(x, y, '.')
 
-			plt.plot(x,y,'.',label = np.copy(labels[k]))
+		
 
-		plt.legend()	
+	def plotSim2DRelative(self, stateIDtarget, stateIDorigin,labels = {}):
 
-	def plotSim2DRelative(self, stateIDtarget, stateIDorigin,labels):
-
-		plt.figure()	
-		plt.axis('equal')
 		originStates = self.particleStates[stateIDorigin]
 		for target in stateIDtarget:
-
 
 			targetStates = self.particleStates[target]
 
 			x = [t[0] - o[0] for t, o in zip(targetStates, originStates)]
 			y = [t[1] - o[1] for t, o in zip(targetStates, originStates)]
 
-			plt.plot(x,y,'.',label = np.copy(labels[target]))
-		plt.legend()
+			try:
+				plt.plot(x, y, '.', label = labels[target])
+			except:
+				plt.plot(x, y, '.')	
 
-	def plotSim3D(self):
+	def plotSim3D(self, labels = {}, fig = None):
 
-		fig = plt.figure()
+		if fig is None:
+			fig = plt.figure()
 
 		ax = fig.add_subplot(111, projection = '3d')
 
@@ -117,11 +117,17 @@ class Nbodysim(object):
 			y = np.squeeze(np.array([state[1] for state in statelist]))
 			z = np.squeeze(np.array([state[2] for state in statelist]))
 
-			ax.plot(x,y,z)
+			try:
+				ax.plot(x, y, z, '.', label = labels[k])
+			except:
+				ax.plot(x, y, z, '.')
 
 			
-	def plotSim3DRelative(self, stateIDtarget, stateIDorigin, labels):
-		fig = plt.figure()
+	def plotSim3DRelative(self, stateIDtarget, stateIDorigin, labels = {}, fig = None):
+
+		if fig is None:
+			fig = plt.figure()
+
 		ax = fig.add_subplot(111, projection = '3d')
 
 		originStates = self.particleStates[stateIDorigin]
@@ -134,8 +140,10 @@ class Nbodysim(object):
 			y = [t[1] - o[1] for t, o in zip(targetStates, originStates)]
 			z = [t[2] - o[2] for t, o in zip(targetStates, originStates)]
 
-			ax.plot(x,y,z,'.',label = np.copy(labels[target]))
-		plt.legend()
+			try:
+				ax.plot(x, y, z,'.',label = labels[target])
+			except:
+				ax.plot(x, y, z, '.')
 
 
 

@@ -30,12 +30,8 @@ class Gravity(Force):
 
 			r = effector.state.pos-effected.state.pos
 			r3 = np.linalg.norm(r)**3
-
-			acc += (6.67e-11 * effector.mass)/r3 * r
-			# print 'direction of acc: ', effected.state.pos
-			# print 'acc: ', acc
-			# print 'mass: ', effected.mass
-			# input('')
+			
+			acc += (6.67408e-11 * effector.mass)/r3 * r
 
 		return acc
 
