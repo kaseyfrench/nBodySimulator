@@ -76,7 +76,7 @@ def test():
 	plt.axis('equal')
 	system.plotSim2D(labels)
 	plt.legend()
-	plt.savefig('samplesimulation.png', format = 'png', dpi = 500)
+	# plt.savefig('samplesimulation.png', format = 'png', dpi = 500)
 
 	fig = plt.figure(2)
 	system.plotSim2DRelative([key for key in labels if key != id(Earth.state)],

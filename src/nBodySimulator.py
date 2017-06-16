@@ -14,9 +14,13 @@ from collections import OrderedDict
 
 class Nbodysim(object):
 
-	def __init__(self, particleList, force):
+	def __init__(self, particleList, force1, force2 = None):
 		self.particleList = particleList
-		self.force = force()
+		self.force1 = force1() # How does this know that it's a force class object?
+		self.forces = [self.force1]
+		if force2 != None:
+			self.force2 = force2()
+			self.forces = [self.force1, self.force2] # Why doesn't append work?
 		self.particleStates = OrderedDict()
 
 		for p in self.particleList:
@@ -53,8 +57,11 @@ class Nbodysim(object):
 			pj = [pj for pj in self.particleList if pj != p]
 			p.state.pos = reshape(x[i*6:i*6+3], (3,1))
 			p.state.vel = reshape(x[i*6+3:i*6+6], (3,1))
+	
+			for self.force in self.forces:
+	
+				dx[i*6+3:i*6+6] += reshape(self.force.computeAccel(p, pj), (3,))
 
-			dx[i*6+3:i*6+6] = reshape(self.force.computeAccel(p, pj), (3,))
 
 		dx[0::6] = x[3::6]
 		dx[1::6] = x[4::6]
