@@ -3,9 +3,7 @@
 # Kasey French, June 14th 2017
 # ***********************************************************
 
-from src.force import *
-from src.particle import *
-from src.nBodySimulator import *
+from nbodysim import *
 import matplotlib.pyplot as plt
 import time 
 import numpy as np

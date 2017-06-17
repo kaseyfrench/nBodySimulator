@@ -3,8 +3,7 @@
 # Kasey French, June 15th 2017
 # ***************************************************************
 
-from src.force import *
-from src.particle import *
+from nbodysim import *
 
 def test():
 
