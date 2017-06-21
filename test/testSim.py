@@ -3,11 +3,9 @@
 # Kasey French, May 28th 2017
 # ***********************************************************
 
-from src.force import *
-from src.particle import *
-from src.nBodySimulator import *
+from nbodysim import *
 import matplotlib.pyplot as plt
-import time 
+import time
 import numpy as np
 
 def test():
@@ -38,13 +36,13 @@ def test():
 	stdMass = 1.e21
 
 	massFactory = MassFactory()
-	massList = massFactory.generateRandomMasses(nMasses, meanPos, stdPos, 
-	                                            meanVel, stdVel, meanMass, 
+	massList = massFactory.generateRandomMasses(nMasses, meanPos, stdPos,
+	                                            meanVel, stdVel, meanMass,
 	                                            stdMass)
 
 	massList.extend(pList)
-
-	galaxy = Nbodysim(pList, Gravity)
+	myGrav = Gravity()
+	galaxy = Nbodysim(pList, [Gravity])
 	tspan = np.linspace(0,365*86400,7000)
 
 	galaxy.integrate(tspan)

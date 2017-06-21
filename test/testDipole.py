@@ -51,20 +51,21 @@ def test():
 	plt.legend()
 	plt.axis('equal')
 
-	plt.figure(2)
-	mySystem.plotSim2DRelative(
-	        [id(objects.state) for objects in CME if id(objects.state) != id(Earth.state)]
-	        , id(Earth.state), labels)
-	plt.legend()
-	plt.axis('equal')
+	# plt.figure(2)
+	# mySystem.plotSim2DRelative(
+	#         [id(objects.state) for objects in CME if id(objects.state) != id(Earth.state)]
+	#         , id(Earth.state), labels)
+	# plt.legend()
+	# plt.axis('equal')
 
-	fig = plt.figure(3)
-	mySystem.plotSim3DRelative(
-	        [id(objects.state) for objects in CME if id(objects.state) != id(Earth.state)]
-	        , id(Earth.state), labels, fig = fig)
-	plt.legend()
+	# fig = plt.figure(3)
+	# mySystem.plotSim3DRelative(
+	#         [id(objects.state) for objects in CME if id(objects.state) != id(Earth.state)]
+	#         , id(Earth.state), labels, fig = fig)
+	# plt.legend()
 	plt.show()
 
+	#mySystem.animate2D(labels)
 
 
 if __name__ == '__main__':

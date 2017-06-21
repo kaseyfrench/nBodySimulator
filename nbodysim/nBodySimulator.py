@@ -11,6 +11,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from scipy.integrate import odeint
 from numpy import vstack, array, squeeze, reshape, zeros, where
 from collections import OrderedDict
+from matplotlib import animation
 
 class Nbodysim(object):
 
@@ -18,6 +19,7 @@ class Nbodysim(object):
 		self.particleList = particleList
 		self.forces = forceList
 		self.particleStates = OrderedDict()
+		self.tspan = None
 
 		for p in self.particleList:
 			self.particleStates[id(p.state)] = []
@@ -67,6 +69,7 @@ class Nbodysim(object):
 
 	def integrate(self, tspan):
 
+		self.tspan = tspan
 		# Upack initial state
 		y0 = array([vstack([s.state.pos, s.state.vel]) for s in self.particleList])
 		y0 = reshape(y0, (y0.size,))
@@ -76,7 +79,6 @@ class Nbodysim(object):
 
 		for i, s in enumerate(self.particleStates):
 			self.particleStates[s] = y[:,i*6:i*6+3]
-
 
 	def plotSim2D(self, labels = {}):
 
@@ -169,6 +171,41 @@ class Nbodysim(object):
 				ax.plot(x, y, z,'.',label = labels[target])
 			except:
 				ax.plot(x, y, z, '.')
+
+
+	def animate2D(self, xlim, ylim, filename, labels = {}):
+
+		def plotFrame(n):
+
+			fig.clear()
+
+			for k, statelist in self.particleStates.iteritems():
+
+				x = statelist[n][0]
+				y = statelist[n][1]
+				try:
+					plt.plot(x, y, '.', label = labels[k])
+				except:
+					plt.plot(x, y, '.')
+
+				plt.axis('equal')
+				plt.ylim(ylim)
+				plt.xlim(xlim)
+
+			plt.legend(loc = 'upper center', bbox_to_anchor = (0.5, 1.1),
+	           ncol = 5, fancybox = True, shadow = True,
+	           frameon = True, fontsize = 8)
+
+		fig = plt.figure()
+		n = len(self.tspan)
+		frames = range(0, n, int(n / 8000))
+
+		anim = animation.FuncAnimation(fig, plotFrame, frames = frames, blit = False)
+
+		Writer = animation.writers['ffmpeg']
+		writer = Writer(fps = 60, bitrate = 1800)
+		anim.save(filename + '.mp4', writer = writer)
+		plt.show()
 
 
 class Nbodyfixedcharges(Nbodysim):
