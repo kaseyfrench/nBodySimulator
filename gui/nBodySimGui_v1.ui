@@ -18,12 +18,11 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow{
-	background-color: rgba(75, 75, 75, 250);
+	background-color: rgba(65, 65, 65, 250);
 }
 QFrame{
-	background-color: rgba(28, 57, 120, 250);
 	
-	border-color: rgba(53, 53, 53, 230);
+	background-color: rgb(78, 78, 78);
 }
 QPushButton{
 	background-color: rgba(103,103,103,253);
@@ -89,7 +88,7 @@ QPushButton{
       <string>Generate Specific Distribution</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="movieBut">
+    <widget class="QPushButton" name="quickPlotBut">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -105,7 +104,7 @@ QPushButton{
       </font>
      </property>
      <property name="text">
-      <string>Create Movie</string>
+      <string>Quick SPD</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_4">
@@ -127,7 +126,7 @@ QPushButton{
       <string>PushButton</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_5">
+    <widget class="QPushButton" name="collidingSystemBut">
      <property name="geometry">
       <rect>
        <x>510</x>
@@ -143,10 +142,10 @@ QPushButton{
       </font>
      </property>
      <property name="text">
-      <string>PushButton</string>
+      <string>Colliding System</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_6">
+    <widget class="QPushButton" name="orbitingSystemBut">
      <property name="geometry">
       <rect>
        <x>510</x>
@@ -162,7 +161,7 @@ QPushButton{
       </font>
      </property>
      <property name="text">
-      <string>PushButton</string>
+      <string>Create Orbiting Sys</string>
      </property>
     </widget>
     <widget class="QLabel" name="label">
@@ -222,7 +221,7 @@ QPushButton{
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap>samplesimulation.png</pixmap>
+      <pixmap>../../Documents/nBodyMainWindow.png</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>

@@ -195,10 +195,10 @@ class Nbodysim(object):
 				except:
 					plt.plot(x, y, '.')
 
-				plt.axis('equal')
-				ax = plt.gca()
-				ax.set_ylim(ymin = ylim[0], ymax = ylim[1])
-				ax.set_xlim(xmin = xlim[0], xmax = xlim[1])
+				ax = plt.subplot()
+				ax.set_aspect('equal', adjustable = 'box')
+				ax.set_ylim(ylim)
+				ax.set_xlim(xlim)
 
 			plt.legend(loc = 'upper center', bbox_to_anchor = (0.5, 1.1),
 	           ncol = 5, fancybox = True, shadow = True,

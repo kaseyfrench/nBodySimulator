@@ -22,6 +22,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 plt.style.use(['dark_background'])
+myGrav = Gravity()
 
 mainAppClass, baseClass = uic.loadUiType('nBodySimGui_v1.ui')
 
@@ -34,23 +35,23 @@ class myPopUp(popUpClass, baseClass):
 		self.setupUi(self)
 
 		self.nParticleBox.setText('10')
-		self.meanMassBox.setText('1.000e30')
-		self.stdMassBox.setText('1.000e29')
+		self.meanMassBox.setText('1.000e32')
+		self.stdMassBox.setText('1.000e31')
 
 		self.xmeanPosBox.setText('0.000e00')
 		self.xstdPosBox.setText('1.000e13')
 		self.xmeanVelBox.setText('0.000e00')
-		self.xstdVelBox.setText('1.000e01')
+		self.xstdVelBox.setText('1.000e04')
 
 		self.ymeanPosBox.setText('0.000e00')
 		self.ystdPosBox.setText('1.000e13')
 		self.ymeanVelBox.setText('0.000e00')
-		self.ystdVelBox.setText('1.000e01')
+		self.ystdVelBox.setText('1.000e04')
 
 		self.zmeanPosBox.setText('0.000e00')
 		self.zstdPosBox.setText('1.000e13')
 		self.zmeanVelBox.setText('0.000e00')
-		self.zstdVelBox.setText('1.000e01')
+		self.zstdVelBox.setText('1.000e04')
 
 		self.tspanBox.setText('1000')
 
@@ -95,7 +96,9 @@ class myApp(mainAppClass, baseClass):
 
 		self.genParticleDistButton.clicked.connect(self.genPD)
 		self.genSpecDistBut.clicked.connect(self.genSPD)
-		self.movieBut.clicked.connect(self.createMovie)
+		self.quickPlotBut.clicked.connect(self.quickPlot)
+		self.orbitingSystemBut.clicked.connect(self.orbitingSystem)
+		self.collidingSystemBut.clicked.connect(self.collidingSystem)
 
 	def genPD(self, item):
 		self.w = myPopUp()
@@ -104,35 +107,22 @@ class myApp(mainAppClass, baseClass):
 
 	def genSPD(self, item):
 		self.w2 = myPopUp2()
-		self.createMovieBut = QPushButton(self.w2.frame)
-		self.createMovieLabel = QLabel(self.w2.frame)
-		self.createMovieBut.move(250,310)
-		self.createMovieLabel.move(250,290)
-		self.createMovieLabel.setText('Create Movie:')
 		self.w2.show()
 		self.myList = []
 		self.labels.clear()
+		self.w2.massTable.clear()
+		self.w2.tSpanBox.setText('365')
 		self.w2.moreMassesBut.clicked.connect(self.addMasses)
 		self.w2.simulateBut.clicked.connect(self.movieCreator)
 		# self.createMovieBut.clicked.connect(self.movieCreator)
 
-	def createMovie(self, item):
+	def quickPlot(self, item):
 		self.w2 = myPopUp2()
-		self.nameBox = QLineEdit(self.w2.frame)
-		self.nameLabel = QLabel(self.w2.frame)
-		self.nameBox.move(250,310)
-		self.nameLabel.move(250,290)
-		self.nameLabel.setText('Filename:')
-		self.frameBox = QLineEdit(self.w2.frame)
-		self.frameLabel = QLabel(self.w2.frame)
-		self.frameBox.move(250, 250)
-		self.frameLabel.move(250,230)
-		self.frameLabel.setText('Frames:')
 		self.w2.show()
 		self.myList = []
 		self.labels.clear()
 		self.w2.moreMassesBut.clicked.connect(self.addMasses)
-		self.w2.simulateBut.clicked.connect(self.movieCreator)
+		self.w2.simulateBut.clicked.connect(self.testPlot2)
 
 
 	def testPlot(self, item):
@@ -176,7 +166,6 @@ class myApp(mainAppClass, baseClass):
 		#plt.figure()
 		#plt.plot(x,y,'.')
 
-		myGrav = Gravity()
 		self.simulator  = Nbodysim(mList, [myGrav])
 		self.simulator.integrate(tspan)
 		plt.figure()
@@ -249,17 +238,12 @@ class myApp(mainAppClass, baseClass):
 	def testPlot2(self, item):
 		tspan = 86400.0 * float(self.w2.tSpanBox.text())
 		tspan = np.linspace(0, tspan, 5000)
-		myGrav  = Gravity()
 		myElectro = Electromagnetism()
 
 		plt.figure()
 		self.mySystem = Nbodysim(self.myList, [myGrav, myElectro])
 		self.mySystem.integrate(tspan)
 		self.mySystem.plotSim2D(labels = self.labels)
-		self.myList = []
-		self.labels.clear()
-		self.w2.massTable.clear()
-		self.w2.tSpanBox.clear()
 
 		plt.legend()
 		plt.show()
@@ -287,8 +271,99 @@ class myApp(mainAppClass, baseClass):
 		                         	nframes = int(self.w2.nFramesBox.text()),
 		                         	labels = self.labels)
 		print 'File created'
-		self.myList = []
-		self.labels.clear()
+
+	def orbitingSystem(self, item):
+
+		mySystem = orbitingSystemClass()
+
+		self.orbitingSim = Nbodysim(mySystem.getList(), [myGrav])
+		tspan = 86400.0 * 10000
+		tspan = np.linspace(0, tspan, 2000)
+		self.orbitingSim.integrate(tspan)
+		self.orbitingSim.plotSim2D()
+
+		plt.show()
+
+	def collidingSystem(self, item):
+
+		firstSystem = orbitingSystemClass()
+		secondSystem = orbitingSystemClass()
+		thirdSystem = orbitingSystemClass()
+		fourthSystem = orbitingSystemClass()
+		bodies1 = firstSystem.getList()
+		bodies2 = secondSystem.getList()
+		bodies3 = thirdSystem.getList()
+		bodies4 = fourthSystem.getList()
+
+		for k in bodies1:
+			k.state.pos[0] += 5.000e012
+			k.state.vel[1] += 0.000e03
+			#k.state.vel[0] -= 1.000e03
+
+		for k in bodies2:
+			k.state.pos[0] -= 5.000e12
+			k.state.vel[1] -= 2.000e03
+			#k.state.vel[0] += 1.000e03
+
+		# for k in bodies3:
+		# 	k.state.pos[1] -= 6.000e12
+		# 	k.state.vel[0] += 2.000e04
+
+		# for k in bodies4:
+		# 	k.state.pos[1] += 6.000e12
+		# 	k.state.vel[0] -= 2.000e04
+
+		List = bodies1 + bodies2
+		mySimulator = Nbodysim(List, [myGrav])
+
+		tspan = 86400.0 * 100000
+		tspan = np.linspace(0, tspan, 3000)
+		print 'Integrating...'
+		mySimulator.integrate(tspan)
+		x = [abs(p[0]) for _,pList in mySimulator.particleStates.iteritems() for p in pList]
+		y = [abs(p[1]) for _,pList in mySimulator.particleStates.iteritems() for p in pList]
+
+		xlim = 1.5 * max(x)
+		ylim = 1.5 * max(y)
+		print 'Animating...'
+		mySimulator.animate2D(xlim = [-xlim, xlim],
+		                         	ylim = [-ylim, ylim],
+		                         	filename = 'testCollision',
+		                         	nframes = 1000,
+		                         	labels = {})
+
+class orbitingSystemClass(object):
+
+	def __init__(self):
+		self.bodies = []
+		self.centerBody = MassParticle(1.000e31 + 1.000e30 * np.random.standard_normal((1,1)),
+		                               State(pos = [0, 0, 0] + np.random.standard_normal((1,1)) * 1.000e01))
+
+		G = 6.674e-11
+
+		n = np.random.randint(low = 1, high = 9)
+		for x in range(1,n):
+			self.bodies.append(MassParticle(1.000e25 + 5.000e23 * np.random.standard_normal((1,1)),
+			               	State(pos = np.random.standard_normal((3,1)) * 9.000e11)))
+
+
+		M = self.centerBody.mass + sum(particle.mass for particle in self.bodies)
+
+		for particle in self.bodies:
+			particle.state.pos[2] = 0
+			particle.state.vel = np.cross(np.reshape(particle.state.pos, (1,3)), [0, 0, 1], axisc = 0)
+			particle.state.vel = particle.state.vel / np.linalg.norm(particle.state.vel)
+			particle.state.vel = np.sqrt(G * M / np.linalg.norm(particle.state.pos)) * particle.state.vel
+
+		self.bodies.append(self.centerBody)
+
+	def getList(self):
+		return self.bodies
+
+
+
+
+
 
 
 if __name__ == '__main__':
