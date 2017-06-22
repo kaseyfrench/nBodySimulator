@@ -12,6 +12,7 @@ Doxygen/LaTeX
 html
 latex
 PythonLib
+*.mp4
 
 # Ignore the Cython created CPP files
 *.cpp

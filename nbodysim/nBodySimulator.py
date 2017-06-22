@@ -3,6 +3,7 @@
 # Kasey French, May 28th 2017
 # **********************************************************
 
+from __future__ import print_function
 from particle import *
 from force import *
 import matplotlib.pyplot as plt
@@ -173,11 +174,17 @@ class Nbodysim(object):
 				ax.plot(x, y, z, '.')
 
 
-	def animate2D(self, xlim, ylim, filename, labels = {}):
+	def animate2D(self, xlim, ylim, filename, nframes = None, labels = {}):
+
+		if nframes is None:
+			nframes = len(self.tspan)
+		self.count = 0
 
 		def plotFrame(n):
 
+			print('Animating frame %d of %d' % (self.count, nframes), end = '\r')
 			fig.clear()
+			self.count += 1
 
 			for k, statelist in self.particleStates.iteritems():
 
@@ -189,8 +196,9 @@ class Nbodysim(object):
 					plt.plot(x, y, '.')
 
 				plt.axis('equal')
-				plt.ylim(ylim)
-				plt.xlim(xlim)
+				ax = plt.gca()
+				ax.set_ylim(ymin = ylim[0], ymax = ylim[1])
+				ax.set_xlim(xmin = xlim[0], xmax = xlim[1])
 
 			plt.legend(loc = 'upper center', bbox_to_anchor = (0.5, 1.1),
 	           ncol = 5, fancybox = True, shadow = True,
@@ -198,14 +206,15 @@ class Nbodysim(object):
 
 		fig = plt.figure()
 		n = len(self.tspan)
-		frames = range(0, n, int(n / 8000))
+		frames = range(0, n, int(n / nframes))
+		nframes = len(frames)
 
 		anim = animation.FuncAnimation(fig, plotFrame, frames = frames, blit = False)
 
 		Writer = animation.writers['ffmpeg']
 		writer = Writer(fps = 60, bitrate = 1800)
 		anim.save(filename + '.mp4', writer = writer)
-		plt.show()
+		print('\n')
 
 
 class Nbodyfixedcharges(Nbodysim):
