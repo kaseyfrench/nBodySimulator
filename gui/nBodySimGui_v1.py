@@ -54,8 +54,8 @@ class myPopUp(popUpClass, baseClass):
 
 		self.tspanBox.setText('1000')
 
-		self.massTable.setRowCount(1)
-		self.massTable.setColumnCount(5)
+		#self.massTable.setRowCount(1)
+		#self.massTable.setColumnCount(5)
 
 	# def getValues(self):
 	# 	self.mean
