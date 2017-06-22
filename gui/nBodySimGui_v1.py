@@ -3,15 +3,25 @@
 
 Kasey French, June 17th, 2017"""
 
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5 import uic
-from PyQt5.QtWidgets import *
+try:
+	from PyQt4.QtGui import *
+	from PyQt4.QtCore import *
+	from PyQt4 import uic
+except:
+	try:
+		from PyQt5.QtGui import *
+		from PyQt5.QtCore import *
+		from PyQt5 import uic
+		from PyQt5.QtWidgets import *
+	except:
+		raise ImportError('nBodySim requires PyQt4 or PyQt5')
+
 import sys
 from nbodysim import *
 from matplotlib import pyplot as plt
-import seaborn
 import numpy as np
+
+plt.style.use(['dark_background'])
 
 mainAppClass, baseClass = uic.loadUiType('nBodySimGui_v1.ui')
 
@@ -44,6 +54,9 @@ class myPopUp(popUpClass, baseClass):
 
 		self.tspanBox.setText('1000')
 
+		self.massTable.setRowCount(1)
+		self.massTable.setColumnCount(5)
+
 	# def getValues(self):
 	# 	self.mean
 
@@ -52,8 +65,10 @@ class myPopUp2(popUpClass2, baseClass):
 		super(myPopUp2, self).__init__()
 		self.setupUi(self)
 
-		self.massBox.setText('1.000e10')
+		self.massBox.setText('1.970e30')
 		self.chargeBox.setText('0.000e00')
+
+		self.labelBox.setText('Sun')
 
 		self.xPosBox.setText('0.000e00')
 		self.yPosBox.setText('0.000e00')
@@ -62,6 +77,14 @@ class myPopUp2(popUpClass2, baseClass):
 		self.xVelBox.setText('0.000e00')
 		self.yVelBox.setText('0.000e00')
 		self.zVelBox.setText('0.000e00')
+
+		self.tSpanBox.setText('365')
+		self.nFramesBox.setText('365')
+		self.bitRateBox.setText('1800')
+		self.fpsBox.setText('30')
+
+		self.outFileBox.setText('nbodysim.anim')
+
 
 class myApp(mainAppClass, baseClass):
 	def __init__(self):
@@ -90,8 +113,8 @@ class myApp(mainAppClass, baseClass):
 		self.myList = []
 		self.labels.clear()
 		self.w2.moreMassesBut.clicked.connect(self.addMasses)
-		self.w2.simulateBut.clicked.connect(self.testPlot2)
-		self.createMovieBut.clicked.connect(self.movieCreator)
+		self.w2.simulateBut.clicked.connect(self.movieCreator)
+		# self.createMovieBut.clicked.connect(self.movieCreator)
 
 	def createMovie(self, item):
 		self.w2 = myPopUp2()
@@ -187,26 +210,41 @@ class myApp(mainAppClass, baseClass):
 			newLabels = {id(dummyParticle.state) : label}
 			self.labels.update(newLabels)
 
-		nSpaces = -(len(label) - 20)
-		self.w2.massList.addItem(label + (' ' * nSpaces) + str(dummyParticle.mass)
-		                         + '    ' + str(dummyParticle.state.pos[0])
-		                         + '  ' + str(dummyParticle.state.pos[1])
-		                         + '  ' + str(dummyParticle.state.pos[2])
-		                         + '    ' + str(dummyParticle.state.vel[0])
-		                         + '  ' + str(dummyParticle.state.vel[1])
-		                         + '  ' + str(dummyParticle.state.vel[2]))
+		# nSpaces = -(len(label) - 20)
+		# self.w2.massList.addItem(label + (' ' * nSpaces) + str(dummyParticle.mass)
+		#                          + '    ' + str(dummyParticle.state.pos[0])
+		#                          + '  ' + str(dummyParticle.state.pos[1])
+		#                          + '  ' + str(dummyParticle.state.pos[2])
+		#                          + '    ' + str(dummyParticle.state.vel[0])
+		#                          + '  ' + str(dummyParticle.state.vel[1])
+		#                          + '  ' + str(dummyParticle.state.vel[2]))
 
-		self.w2.massBox.setText('1.000e10')
+		mass = '{0:g}'.format(dummyParticle.mass)
+		chrg = '{0:g}'.format(dummyParticle.charge)
+		rmag = '{0:g}'.format(np.linalg.norm(dummyParticle.state.pos))
+		vmag = '{0:g}'.format(np.linalg.norm(dummyParticle.state.vel))
+
+		row = self.w2.massTable.rowCount() - 1
+		self.w2.massTable.setItem(row, 0, QTableWidgetItem(label))
+		self.w2.massTable.setItem(row, 1, QTableWidgetItem(mass))
+		self.w2.massTable.setItem(row, 2, QTableWidgetItem(chrg))
+		self.w2.massTable.setItem(row, 3, QTableWidgetItem(rmag))
+		self.w2.massTable.setItem(row, 4, QTableWidgetItem(vmag))
+		self.w2.massTable.insertRow(row+1)
+
+		self.w2.massBox.setText('5.970e24')
 		self.w2.chargeBox.setText('0.000e00')
 		self.w2.labelBox.clear()
 
-		self.w2.xPosBox.setText('0.000e00')
+		self.w2.xPosBox.setText('1.490e11')
 		self.w2.yPosBox.setText('0.000e00')
 		self.w2.zPosBox.setText('0.000e00')
 
 		self.w2.xVelBox.setText('0.000e00')
-		self.w2.yVelBox.setText('0.000e00')
+		self.w2.yVelBox.setText('2.970e04')
 		self.w2.zVelBox.setText('0.000e00')
+
+		self.w2.labelBox.setText('Earth')
 
 	def testPlot2(self, item):
 		tspan = 86400.0 * float(self.w2.tSpanBox.text())
@@ -220,7 +258,7 @@ class myApp(mainAppClass, baseClass):
 		self.mySystem.plotSim2D(labels = self.labels)
 		self.myList = []
 		self.labels.clear()
-		self.w2.massList.clear()
+		self.w2.massTable.clear()
 		self.w2.tSpanBox.clear()
 
 		plt.legend()
@@ -242,11 +280,11 @@ class myApp(mainAppClass, baseClass):
 		xlim = 1.5 * max(x)
 		ylim = 1.5 * max(y)
 
-		name = str(self.nameBox.text())
+		name = str(self.w2.outFileBox.text())
 		self.mySystem.animate2D(xlim = [-xlim, xlim],
 		                         	ylim = [-ylim, ylim],
 		                         	filename = name,
-		                         	nframes = int(self.frameBox.text()),
+		                         	nframes = int(self.w2.nFramesBox.text()),
 		                         	labels = self.labels)
 		print 'File created'
 		self.myList = []
